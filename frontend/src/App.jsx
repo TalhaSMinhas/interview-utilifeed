@@ -4,15 +4,23 @@ import './App.css'
 
 //table component
 function TableComp({ data }){
+    const [searchTerm, setSearchTerm] = useState('');
+
     if (!data || !data.cities) {
         return <p>Loading cities...</p>;
     }
+
+     const filteredData = Object.entries(data.cities).filter(([key]) => {
+        if (searchTerm === "") return true;
+        return key.toLowerCase().includes(searchTerm.toLowerCase());
+    });
 
     return(
         <div className="parent-table-container">
             <div className="search-bar-container">
                 <span>🔍</span>
-                <input type="text" placeholder="Search for cities..."/>
+                <input type="text" placeholder="Search for cities..."
+                       onChange={(e) => setSearchTerm(e.target.value)}/>
             </div>
             <div className="table_component" role="region" tabIndex="0">
                 <table>
@@ -27,7 +35,7 @@ function TableComp({ data }){
                     </tr>
                     </thead>
                     <tbody>
-                    {Object.entries(data.cities).map(([city, stats]) => (
+                    {filteredData.map(([city, stats]) => (
                         <tr key={city}>
                             <td>{city}</td>
                             <td>{stats.min}</td>
