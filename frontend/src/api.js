@@ -46,8 +46,18 @@ export async function fetchCities() {
  * Hint: Handle 404 errors for cities that don't exist
  */
 export async function fetchCity(cityName) {
-  // TODO: Implement this function
-  throw new Error('fetchCity not yet implemented - this is part of your task!');
+    try{
+        const response = await fetch(`${API_BASE_URL}/api/cities/${cityName}`)
+
+        if (response.ok){
+            return await response.json()
+        }
+        else {
+            throw new Error("Failed to fetch city")
+        }
+    } catch (error){
+        throw new Error(`Failed to fetch city, ${error}`)
+    }
 }
 
 /**

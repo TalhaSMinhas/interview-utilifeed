@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { checkHealth } from './api'
+import {checkHealth, fetchCities} from './api'
 import './App.css'
 
 function App() {
@@ -38,6 +38,12 @@ function App() {
   // - Use Object.entries(cities) to iterate over the cities
   // - Call loadCities(query) to fetch filtered results
   // - The loading, error, and totalCities states are already managed
+
+    useEffect(() => {
+        fetchCities()
+            .then(res => console.log(res))
+            .catch(error => console.log(error))
+    },[])
 
   return (
     <div className="app">
