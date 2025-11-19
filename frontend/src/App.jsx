@@ -4,6 +4,10 @@ import './App.css'
 
 //table component
 function TableComp({ data }){
+    if (!data || !data.cities) {
+        return <p>Loading cities...</p>;
+    }
+
     return(
         <div className="parent-table-container">
             <div className="search-bar-container">
@@ -23,6 +27,26 @@ function TableComp({ data }){
                     </tr>
                     </thead>
                     <tbody>
+                    {Object.entries(data.cities).map(([city, stats]) => (
+                        <tr key={city}>
+                            <td>{city}</td>
+                            <td>{stats.min}</td>
+                            <td>{stats.mean}</td>
+                            <td>{stats.max}</td>
+                            <td style={{ textAlign: "center" }}>
+                                <button
+                                    style={{
+                                        background: "transparent",
+                                        border: "none",
+                                        fontSize: "1.2rem",
+                                        cursor: "pointer"
+                                    }}
+                                >
+                                    Fav
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
                     </tbody>
                 </table>
             </div>
@@ -111,7 +135,7 @@ function App() {
         </div>
 
         <div className="message">
-          <TableComp/>
+          <TableComp data={cities}/>
         </div>
       </div>
     </div>
