@@ -1,17 +1,31 @@
-import { useState, useEffect } from 'react'
+import {useEffect, useState} from 'react'
 import {checkHealth, fetchCities, fetchCity} from './api'
 import './App.css'
 
 //table component
-function TableComp({ data }){
+function TableComp({data}) {
     const [searchTerm, setSearchTerm] = useState('');
     const [favorites, setFavorites] = useState(() => {
         const saved = localStorage.getItem("favorites");
         return saved ? JSON.parse(saved) : [];
     });
 
-    if (!data || !data.cities) {
-        return <p>Loading cities...</p>;
+    const loading = !data || !data.cities;
+
+    if (loading) {
+        return (
+            <p style={{textAlign: "center", padding: "1rem"}}>
+                Loading city data...
+            </p>
+        );
+    }
+
+    if (Object.keys(data.cities).length === 0) {
+        return (
+            <p style={{textAlign: "center", padding: "1rem"}}>
+                No city data available.
+            </p>
+        );
     }
 
     function toggleFavorite(cityName) {
@@ -23,7 +37,7 @@ function TableComp({ data }){
         localStorage.setItem("favorites", JSON.stringify(updated));
     }
 
-     const filteredData = Object.entries(data.cities).filter(([key]) => {
+    const filteredData = Object.entries(data.cities).filter(([key]) => {
         if (searchTerm === "") return true;
         return key.toLowerCase().includes(searchTerm.toLowerCase());
     });
@@ -33,7 +47,7 @@ function TableComp({ data }){
         ...filteredData.filter(([city]) => !favorites.includes(city))
     ];
 
-    async function handleRowClick(cityName){
+    async function handleRowClick(cityName) {
         try {
             const info = await fetchCity(cityName);
 
@@ -49,13 +63,12 @@ Recorded: ${info.city_stats.count} times
                 `
             ;
             alert(message)
-        }
-        catch (error){
+        } catch (error) {
             throw new Error(error)
         }
     }
 
-    return(
+    return (
         <div className="parent-table-container">
             <div className="search-bar-container">
                 <span className="search-icon">🔍</span>
@@ -79,28 +92,37 @@ Recorded: ${info.city_stats.count} times
                     </tr>
                     </thead>
                     <tbody>
-                    {sortedData.map(([city, stats]) => (
-                        <tr key={city} >
-                            <td onClick={() => handleRowClick(city)}>{city}</td>
-                            <td className="col-min">{stats.min}</td>
-                            <td className="col-mean">{stats.mean}</td>
-                            <td className="col-max">{stats.max}</td>
-                            <td style={{ textAlign: "center" }}>
-                                <button
-                                    onClick={() => toggleFavorite(city)}
-                                    style={{
-                                        background: "transparent",
-                                        border: "none",
-                                        fontSize: "1.2rem",
-                                        cursor: "pointer"
-                                    }}
-                                >
-                                    {favorites.includes(city) ? "⭐" : "☆"}
-                                </button>
+                    {sortedData.length === 0 ? (
+                        <tr>
+                            <td colSpan="5" style={{textAlign: "center", padding: "1rem", color: "#555"}}>
+                                No city data available.
                             </td>
                         </tr>
-                    ))}
+                    ) : (
+                        sortedData.map(([city, stats]) => (
+                            <tr key={city}>
+                                <td onClick={() => handleRowClick(city)}>{city}</td>
+                                <td className="col-min">{stats.min}</td>
+                                <td className="col-mean">{stats.mean}</td>
+                                <td className="col-max">{stats.max}</td>
+                                <td style={{textAlign: "center"}}>
+                                    <button
+                                        onClick={() => toggleFavorite(city)}
+                                        style={{
+                                            background: "transparent",
+                                            border: "none",
+                                            fontSize: "1.2rem",
+                                            cursor: "pointer"
+                                        }}
+                                    >
+                                        {favorites.includes(city) ? "⭐" : "☆"}
+                                    </button>
+                                </td>
+                            </tr>
+                        ))
+                    )}
                     </tbody>
+
                 </table>
             </div>
         </div>
@@ -143,56 +165,55 @@ function App() {
     // Hints:
     // - Use Object.entries(cities) to iterate over the cities
     // - Call loadCities(query) to fetch filtered results
-  // - The loading, error, and totalCities states are already managed
+    // - The loading, error, and totalCities states are already managed
 
     useEffect(() => {
         fetchCities()
             .then(res => {
                 setCities(res)
-                console.log(res)
             })
             .catch(error => console.log(error))
-    },[])
+    }, [])
 
-  return (
-    <div className="app">
-      <header className="app-header">
-        <h1>🌡️ Weather Statistics Dashboard</h1>
-        <p>Temperature data for cities around the world</p>
-      </header>
+    return (
+        <div className="app">
+            <header className="app-header">
+                <h1>🌡️ Weather Statistics Dashboard</h1>
+                <p>Temperature data for cities around the world</p>
+            </header>
 
-      <div className="container">
-        {/* Example: Health Check - This demonstrates a working API call */}
-        <div className="health-check">
-          <h3>API Status</h3>
-          {apiHealth ? (
-            <div className={`health-status ${apiHealth.status === 'healthy' ? 'healthy' : 'unhealthy'}`}>
-              <span className="status-dot"></span>
-              {apiHealth.status === 'healthy' ? (
-                <>
-                  <strong>✓ Connected</strong> - Backend API is running
-                </>
-              ) : (
-                <>
-                  <strong>✗ Disconnected</strong> - Backend API is not responding
-                </>
-              )}
+            <div className="container">
+                {/* Example: Health Check - This demonstrates a working API call */}
+                <div className="health-check">
+                    <h3>API Status</h3>
+                    {apiHealth ? (
+                        <div className={`health-status ${apiHealth.status === 'healthy' ? 'healthy' : 'unhealthy'}`}>
+                            <span className="status-dot"></span>
+                            {apiHealth.status === 'healthy' ? (
+                                <>
+                                    <strong>✓ Connected</strong> - Backend API is running
+                                </>
+                            ) : (
+                                <>
+                                    <strong>✗ Disconnected</strong> - Backend API is not responding
+                                </>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="health-status checking">Checking...</div>
+                    )}
+                    <p className="health-note">
+                        💡 This is a working example using the <code>/api/health</code> endpoint.
+                        Check <code>src/api.js</code> to see how it's implemented.
+                    </p>
+                </div>
+
+                <div className="message">
+                    <TableComp data={cities}/>
+                </div>
             </div>
-          ) : (
-            <div className="health-status checking">Checking...</div>
-          )}
-          <p className="health-note">
-            💡 This is a working example using the <code>/api/health</code> endpoint.
-            Check <code>src/api.js</code> to see how it's implemented.
-          </p>
         </div>
-
-        <div className="message">
-          <TableComp data={cities}/>
-        </div>
-      </div>
-    </div>
-  )
+    )
 }
 
 export default App
