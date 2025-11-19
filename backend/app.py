@@ -1,8 +1,5 @@
-from re import split
-
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 from flask_cors import CORS
-import os
 
 app = Flask(__name__)
 CORS(
@@ -65,6 +62,11 @@ CORS(
 #     """
 #     pass
 
+'''
+In both the get_weather_map and get_stats functions we use dictionaries because a dictionary lets us store each city once and quickly access all its temperatures.
+'''
+
+
 def get_weather_map():
     weather_map = {}
 
@@ -86,20 +88,22 @@ def get_weather_map():
 
     return weather_map
 
+
 '''
-the get weather map function opens the text file and reads its lines.
-it removes whitespace from the line, and checkes if the cleaned_line is empty.
-if the cleaned_line is empty, it skips it, otherwise it
+The get_weather_map function opens the text file and reads it line by line.
 
-splits the line from the semi-colon, 
-after splitting the line we have an array like [city, string temperature]
-we set out temperature variable to index 1 of the splt line array and cast it to a float
+For each line:
+- It strips whitespace.
+- If the line is empty, it skips it.
+- Otherwise it splits the line by the semicolon, giving something like: [city, tempString].
+- It converts the temperature (index 1) to a float.
 
-then we chech if the city i.e. index 0 of the splt line array in our weather map
-and give its value an empty list
+Then it checks if the city (index 0) already exists in the weather_map dictionary.
+If not, it creates an empty list for that city.
 
-thereafter we add the temperaure to that list
+Finally, it appends the temperature to that city’s list.
 '''
+
 
 def get_stats(weather_map):
     stats_map = {}
@@ -115,8 +119,28 @@ def get_stats(weather_map):
 
     return stats_map
 
+
+'''
+The get_stats function takes the weather_map dictionary and builds a new dictionary called stats_map.
+
+For each city in weather_map:
+- It calculates the minimum temperature using min().
+- The maximum using max().
+- The average by summing the list and dividing by its length, then rounding to 1 decimal.
+- And count is just the number of temperature entries.
+
+It stores all of these values in a dictionary for that city.
+
+Finally, it returns the full stats_map.
+
+*** get_stats_fahrenheit, achieves the same as the get_stats function but does a conversion to fahrenheit***
+
+'''
+
+
 def to_fahrenheit(value):
     return round(((value * 1.8) + 32), 1)
+
 
 def get_stats_fahrenheit(weather_map):
     stats_map = {}
@@ -132,6 +156,7 @@ def get_stats_fahrenheit(weather_map):
 
     return stats_map
 
+
 @app.route('/api/cities', methods=['GET'])
 def get_cities():
     weather_map = get_weather_map()
@@ -141,6 +166,7 @@ def get_cities():
         'total_cities': len(stats)
     })
 
+
 @app.route('/api/cities/<city_name>', methods=['GET'])
 def get_city(city_name):
     weather_map = get_weather_map()
@@ -149,11 +175,11 @@ def get_city(city_name):
     if city_name not in stats:
         return jsonify({"error": "City not found"}), 404
 
-
     return jsonify({
         'city': city_name,
         'city_stats': stats[city_name],
     })
+
 
 @app.route('/api/cities/fahrenheit', methods=['GET'])
 def get_cities_fahrenheit():
@@ -163,6 +189,7 @@ def get_cities_fahrenheit():
         'cities': stats,
         'total_fahrenheit': len(stats),
     })
+
 
 @app.route('/api/cities/fahrenheit/<city_name>', methods=['GET'])
 def get_city_fahrenheit(city_name):
@@ -177,11 +204,12 @@ def get_city_fahrenheit(city_name):
         'city_stats': stats[city_name],
     })
 
+
 @app.route('/api/health', methods=['GET'])
 def health_check():
     """Simple health check endpoint."""
     return jsonify({"status": "healthy", "service": "weather-api"})
 
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
-
