@@ -77,7 +77,7 @@ def get_weather_map():
 
         split_line = cleaned_line.split(';')
 
-        temperature = float(split_line[0])
+        temperature = float(split_line[1])
 
         if split_line[0] not in weather_map:
             weather_map[split_line[0]] = list()
@@ -85,6 +85,22 @@ def get_weather_map():
         weather_map[split_line[0]].append(temperature)
 
     return weather_map
+
+'''
+the get weather map function opens the text file and reads its lines.
+it removes whitespace from the line, and checkes if the cleaned_line is empty.
+if the cleaned_line is empty, it skips it, otherwise it
+
+splits the line from the semi-colon, 
+after splitting the line we have an array like [city, string temperature]
+we set out temperature variable to index 1 of the splt line array and cast it to a float
+
+then we chech if the city i.e. index 0 of the splt line array in our weather map
+and give its value an empty list
+
+thereafter we add the temperaure to that list
+'''
+
 
 @app.route('/api/cities', methods=['GET'])
 def get_cities():
