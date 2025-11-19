@@ -4,6 +4,8 @@
 
 ### Backend Setup (Flask API)
 
+[GitHub Link to Repo](https://github.com/TalhaSMinhas/interview-utilifeed.git)
+
 ```bash
 git clone https://github.com/TalhaSMinhas/interview-utilifeed.git
 cd interview-utilifeed
