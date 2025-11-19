@@ -101,10 +101,28 @@ and give its value an empty list
 thereafter we add the temperaure to that list
 '''
 
+def get_stats(weather_map):
+    stats_map = {}
+
+    for city, temperature in weather_map.items():
+        stats_map[city] = {
+            'city': city,
+            'min': min(temperature),
+            'max': max(temperature),
+            'mean': round(sum(temperature) / len(temperature), 1),
+            'count': len(temperature)
+        }
+
+    return stats_map
 
 @app.route('/api/cities', methods=['GET'])
 def get_cities():
-    """Get all cities."""
+    weather_map = get_weather_map()
+    stats = get_stats(weather_map)
+    return jsonify({
+        'cities': stats,
+        'total_cities': len(stats)
+    })
 
 @app.route('/api/cities/<city_name>', methods=['GET'])
 def get_city(city_name):
