@@ -5,7 +5,7 @@
 ### Backend Setup (Flask API)
 
 ```bash
-git clone https://github.com/<YOUR-USERNAME>/interview-utilifeed.git
+git clone https://github.com/TalhaSMinhas/interview-utilifeed.git
 cd interview-utilifeed
 
 cd backend
