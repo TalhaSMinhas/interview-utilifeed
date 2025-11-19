@@ -126,7 +126,17 @@ def get_cities():
 
 @app.route('/api/cities/<city_name>', methods=['GET'])
 def get_city(city_name):
-    """Get a city."""
+    weather_map = get_weather_map()
+    stats = get_stats(weather_map)
+
+    if city_name not in stats:
+        return jsonify({"error": "City not found"}), 404
+
+
+    return jsonify({
+        'city': city_name,
+        'city_stats': stats[city_name],
+    })
 
 @app.route('/api/cities/fahrenheit', methods=['GET'])
 def get_cities_fahrenheit():
