@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import {checkHealth, fetchCities} from './api'
+import {checkHealth, fetchCities, fetchCity} from './api'
 import './App.css'
 
 //table component
@@ -14,6 +14,28 @@ function TableComp({ data }){
         if (searchTerm === "") return true;
         return key.toLowerCase().includes(searchTerm.toLowerCase());
     });
+
+    async function handleRowClick(cityName){
+        try {
+            const info = await fetchCity(cityName);
+
+            const message =
+                `
+City: ${info.city}
+
+Recorded: ${info.city_stats.count} times
+
+❄ Minimum: ${info.city_stats.min}
+🌡 Average: ${info.city_stats.mean}
+🔥 Maximum: ${info.city_stats.max}
+                `
+            ;
+            alert(message)
+        }
+        catch (error){
+            throw new Error(error)
+        }
+    }
 
     return(
         <div className="parent-table-container">
@@ -36,8 +58,8 @@ function TableComp({ data }){
                     </thead>
                     <tbody>
                     {filteredData.map(([city, stats]) => (
-                        <tr key={city}>
-                            <td>{city}</td>
+                        <tr key={city} >
+                            <td onClick={() => handleRowClick(city)}>{city}</td>
                             <td>{stats.min}</td>
                             <td>{stats.mean}</td>
                             <td>{stats.max}</td>
