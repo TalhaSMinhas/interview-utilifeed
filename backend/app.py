@@ -63,11 +63,6 @@ CORS(
 #     """
 #     pass
 
-@app.route('/api/health', methods=['GET'])
-def health_check():
-    """Simple health check endpoint."""
-    return jsonify({"status": "healthy", "service": "weather-api"})
-
 @app.route('/api/cities', methods=['GET'])
 def get_cities():
     """Get all cities."""
@@ -83,6 +78,11 @@ def get_cities_fahrenheit():
 @app.route('/api/cities/fahrenheit/<city_name>', methods=['GET'])
 def get_cities_fahrenheit(city_name):
     """Get a city with fahrenheit."""
+
+@app.route('/api/health', methods=['GET'])
+def health_check():
+    """Simple health check endpoint."""
+    return jsonify({"status": "healthy", "service": "weather-api"})
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
