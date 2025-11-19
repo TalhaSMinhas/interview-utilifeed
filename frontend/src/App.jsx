@@ -5,15 +5,33 @@ import './App.css'
 //table component
 function TableComp({ data }){
     const [searchTerm, setSearchTerm] = useState('');
+    const [favorites, setFavorites] = useState(() => {
+        const saved = localStorage.getItem("favorites");
+        return saved ? JSON.parse(saved) : [];
+    });
 
     if (!data || !data.cities) {
         return <p>Loading cities...</p>;
+    }
+
+    function toggleFavorite(cityName) {
+        const updated = favorites.includes(cityName)
+            ? favorites.filter(f => f !== cityName)
+            : [...favorites, cityName];
+
+        setFavorites(updated);
+        localStorage.setItem("favorites", JSON.stringify(updated));
     }
 
      const filteredData = Object.entries(data.cities).filter(([key]) => {
         if (searchTerm === "") return true;
         return key.toLowerCase().includes(searchTerm.toLowerCase());
     });
+
+    const sortedData = [
+        ...filteredData.filter(([city]) => favorites.includes(city)),
+        ...filteredData.filter(([city]) => !favorites.includes(city))
+    ];
 
     async function handleRowClick(cityName){
         try {
@@ -57,7 +75,7 @@ Recorded: ${info.city_stats.count} times
                     </tr>
                     </thead>
                     <tbody>
-                    {filteredData.map(([city, stats]) => (
+                    {sortedData.map(([city, stats]) => (
                         <tr key={city} >
                             <td onClick={() => handleRowClick(city)}>{city}</td>
                             <td>{stats.min}</td>
@@ -65,6 +83,7 @@ Recorded: ${info.city_stats.count} times
                             <td>{stats.max}</td>
                             <td style={{ textAlign: "center" }}>
                                 <button
+                                    onClick={() => toggleFavorite(city)}
                                     style={{
                                         background: "transparent",
                                         border: "none",
@@ -72,7 +91,7 @@ Recorded: ${info.city_stats.count} times
                                         cursor: "pointer"
                                     }}
                                 >
-                                    Fav
+                                    {favorites.includes(city) ? "⭐" : "☆"}
                                 </button>
                             </td>
                         </tr>
