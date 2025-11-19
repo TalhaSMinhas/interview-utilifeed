@@ -165,7 +165,7 @@ def get_cities_fahrenheit():
     })
 
 @app.route('/api/cities/fahrenheit/<city_name>', methods=['GET'])
-def get_cities_fahrenheit(city_name):
+def get_city_fahrenheit(city_name):
     weather_map = get_weather_map()
     stats = get_stats_fahrenheit(weather_map)
 
