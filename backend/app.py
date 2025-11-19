@@ -115,6 +115,23 @@ def get_stats(weather_map):
 
     return stats_map
 
+def to_fahrenheit(value):
+    return round(((value * 1.8) + 32), 1)
+
+def get_stats_fahrenheit(weather_map):
+    stats_map = {}
+
+    for city, temperature in weather_map.items():
+        stats_map[city] = {
+            'city': city,
+            'min': to_fahrenheit(min(temperature)),
+            'max': to_fahrenheit(max(temperature)),
+            'mean': to_fahrenheit(sum(temperature) / len(temperature)),
+            'count': len(temperature)
+        }
+
+    return stats_map
+
 @app.route('/api/cities', methods=['GET'])
 def get_cities():
     weather_map = get_weather_map()
@@ -140,11 +157,25 @@ def get_city(city_name):
 
 @app.route('/api/cities/fahrenheit', methods=['GET'])
 def get_cities_fahrenheit():
-    """Get all cities with fahrenheit."""
+    weather_map = get_weather_map()
+    stats = get_stats_fahrenheit(weather_map)
+    return jsonify({
+        'cities': stats,
+        'total_fahrenheit': len(stats),
+    })
 
 @app.route('/api/cities/fahrenheit/<city_name>', methods=['GET'])
 def get_cities_fahrenheit(city_name):
-    """Get a city with fahrenheit."""
+    weather_map = get_weather_map()
+    stats = get_stats_fahrenheit(weather_map)
+
+    if city_name not in stats:
+        return jsonify({"error": "City not found"}), 404
+
+    return jsonify({
+        'city': city_name,
+        'city_stats': stats[city_name],
+    })
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
