@@ -58,9 +58,13 @@ Recorded: ${info.city_stats.count} times
     return(
         <div className="parent-table-container">
             <div className="search-bar-container">
-                <span>🔍</span>
-                <input type="text" placeholder="Search for cities..."
-                       onChange={(e) => setSearchTerm(e.target.value)}/>
+                <span className="search-icon">🔍</span>
+                <input
+                    type="text"
+                    placeholder="Search for cities..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
             </div>
             <div className="table_component" role="region" tabIndex="0">
                 <table>
@@ -68,9 +72,9 @@ Recorded: ${info.city_stats.count} times
                     <thead>
                     <tr>
                         <th>City</th>
-                        <th>Minimum Temperature</th>
-                        <th>Average Temperature</th>
-                        <th>Maximum Temperature</th>
+                        <th className="col-min">Minimum Temperature</th>
+                        <th className="col-mean">Average Temperature</th>
+                        <th className="col-max">Maximum Temperature</th>
                         <th>Favourite</th>
                     </tr>
                     </thead>
@@ -78,9 +82,9 @@ Recorded: ${info.city_stats.count} times
                     {sortedData.map(([city, stats]) => (
                         <tr key={city} >
                             <td onClick={() => handleRowClick(city)}>{city}</td>
-                            <td>{stats.min}</td>
-                            <td>{stats.mean}</td>
-                            <td>{stats.max}</td>
+                            <td className="col-min">{stats.min}</td>
+                            <td className="col-mean">{stats.mean}</td>
+                            <td className="col-max">{stats.max}</td>
                             <td style={{ textAlign: "center" }}>
                                 <button
                                     onClick={() => toggleFavorite(city)}
