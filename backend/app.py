@@ -1,3 +1,5 @@
+from re import split
+
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import os
@@ -62,6 +64,27 @@ CORS(
 #     }
 #     """
 #     pass
+
+def get_weather_map():
+    weather_map = {}
+
+    file = open("../measurements.txt")
+
+    for line in file:
+        cleaned_line = line.strip()
+        if len(cleaned_line) == 0:
+            continue
+
+        split_line = cleaned_line.split(';')
+
+        temperature = float(split_line[0])
+
+        if split_line[0] not in weather_map:
+            weather_map[split_line[0]] = list()
+
+        weather_map[split_line[0]].append(temperature)
+
+    return weather_map
 
 @app.route('/api/cities', methods=['GET'])
 def get_cities():
