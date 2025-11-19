@@ -68,6 +68,22 @@ def health_check():
     """Simple health check endpoint."""
     return jsonify({"status": "healthy", "service": "weather-api"})
 
+@app.route('/api/cities', methods=['GET'])
+def get_cities():
+    """Get all cities."""
+
+@app.route('/api/cities/<city_name>', methods=['GET'])
+def get_city(city_name):
+    """Get a city."""
+
+@app.route('/api/cities/fahrenheit', methods=['GET'])
+def get_cities_fahrenheit():
+    """Get all cities with fahrenheit."""
+
+@app.route('/api/cities/fahrenheit/<city_name>', methods=['GET'])
+def get_cities_fahrenheit(city_name):
+    """Get a city with fahrenheit."""
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
 
