@@ -15,9 +15,19 @@ const API_BASE_URL = 'http://127.0.0.1:5000';
  * Hint: Use the fetch API to make the HTTP request
  * Hint: Don't forget to handle errors appropriately
  */
-export async function fetchCities(searchQuery = '') {
-  // TODO: Implement this function
-  throw new Error('fetchCities not yet implemented - this is part of your task!');
+export async function fetchCities() {
+    try{
+        const response = await fetch(`${API_BASE_URL}/api/cities`)
+
+        if (response.ok){
+            return await response.json()
+        }
+        else{
+            throw new Error('Failed to fetch cities.')
+        }
+    }catch(error) {
+        throw new Error(`Failed to fetch cities, ${error}`)
+    }
 }
 
 /**
