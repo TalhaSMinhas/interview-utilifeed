@@ -3,6 +3,33 @@ import {checkHealth, fetchCities, fetchCity} from './api'
 import './App.css'
 
 //table component
+
+{/*
+The TableComp component receives the city data and displays it in a searchable,
+scrollable, and responsive table.
+
+1. I added a loading state to handle the case when the API hasn’t returned data yet.
+   If the data is missing or empty, I show a friendly message instead of crashing.
+
+2. I used a “favorites” system stored in localStorage. This lets users mark
+   favourite cities and keeps the selection even after a page refresh.
+
+3. For searching, I filter city names using toLowerCase() so the search is case-insensitive.
+
+4. To improve usability, I sort the results so favourites appear at the top.
+   This keeps important cities easy to find.
+
+5. When the user clicks a city row, I fetch the detailed stats from the backend and
+   show an alert with the min/mean/max and number of recordings.
+
+6. The table is fully responsive. On small screens the extra columns (min/mean/max)
+   automatically hide to keep the layout clean.
+
+7. If the user searches for a city that doesn’t exist, or the filter removes all rows,
+   I show a “No city data available” row instead of leaving a blank table.
+*/
+}
+
 function TableComp({data}) {
     const [searchTerm, setSearchTerm] = useState('');
     const [favorites, setFavorites] = useState(() => {
